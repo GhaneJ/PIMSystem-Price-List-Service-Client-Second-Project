@@ -1,0 +1,91 @@
+○ src
+|
++---○ actions
+|   |
+|   |-- api.js (handle all http request)
+|   |-- item.js (Redux actions and action creators)
+|   |-- store.js (configure redux store)
+|
++---○ components
+|   |
+|   |-- ItemForm.js (form operations) - child
+|   |-- Items.js (list of items) - parent
+|   |-- useForm.js (handles common form operations)
+|
++---○ reducers
+|   |
+|   |-- item.js
+|   |-- index.js
+|
+|   |-- App.js
+|   |-- index.js
+|   |-- index.css
+
+
+
+Redux requirements:
+npm packages: redux, react-redux, redux-thunk
+
+Redux is comprised of the following elements:
+
+a. action: describe type of action among others, create, update, delete etc. It will be an object containing the operation, 
+ex. create, update, delete. Along with that we will have a data which is to be deleted or updated, then this action object
+will be passed to the reducer.
+
+b. reducers: We will modify the data stored inside the store. 
+
+c. store: We will store all of the records in a state inside the store.
+
+The flow-chart below can describe this cycle.
+
+ -------------------------------------------------------
+| component -> dispatch(action) -> reducer -> component |
+ -------------------------------------------------------
+
+ In order to pass an action object (like create, update ore delete) from component to reducer (from a to b), we have to call
+a redux function, dispatch() with the action parameter to pass. Then it will reach up to the reducer, based on the operation
+we want to do, reducer will update the data inside the store. The updated data is reflected to the component.
+
+In other words, Redux function Dispatch(), passes a wanted action (create, update or delete) as its parameter to the reducer.
+reducer will apply the requested operation on the store data and sends it back to the component.
+
+Even though we are calling the following operation an action (and it is in the actions subfolder):
+
+
+The history of Redux-thunk and why we need it:
+
+Historically, before Redux-thunk is being introduced, the actions meant to define what type of operations we wanted to do and we
+would be calling The dispatch function to pass an action (create here) with an object argument containing the detail info of
+item (corresponding to Item table columns)
+
+const create = data => {
+    return {
+        type : 'create',
+        payload:data
+    }
+}
+
+// dispatch(create({fullName : ''}))
+
+
+Then inside the reducer, based on the action we've defined (create here), the data would be inserted to the store. Now for actual
+insert operation to Db, we had to post the data into the API. Even though we were calling this an action, but we were not doing any 
+action here, we were just returning an object with the specified operation and the required(?) data.
+
+Because asynchronous API calls were not allowed in this Redux actions, that's why we use the middleware(thunk) inside the store to let 
+the asynchronous API calls being made inside the actions. In that case the reducer will remain a pure function just to update the store,
+that is what we want to do, let's see how we can do it in a better way.
+
+const ACTION_TYPES = {
+    CREATE: 'CREATE',
+    UPDATE: 'UPDATE',
+    DELETE: 'DELETE',
+    FETCH_ALL: 'FETCH_ALL'
+
+}
+
+const fetchAll = () => {
+    return dispatch => {
+        //Actual API call
+    }
+}
